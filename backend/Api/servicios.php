@@ -1,25 +1,26 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
 
-$host = getenv('DB_HOST') ?: 'db';
-$dbname = getenv('DB_NAME') ?: 'fullstack_db';
-$username = getenv('DB_USER') ?: 'root';
-$password = getenv('DB_PASSWORD') ?: '';
+$servicios = [
+    [
+        'id' => 1,
+        'nombre' => 'Desarrollo Web',
+        'descripcion' => 'Desarrollo de aplicaciones web empresariales.',
+        'precio' => 8500
+    ],
+    [
+        'id' => 2,
+        'nombre' => 'Soporte Técnico',
+        'descripcion' => 'Servicio de soporte para infraestructura tecnológica.',
+        'precio' => 3500
+    ],
+    [
+        'id' => 3,
+        'nombre' => 'Consultoría',
+        'descripcion' => 'Análisis y asesoría para proyectos tecnológicos.',
+        'precio' => 5000
+    ]
+];
 
-try {
-    $conexion = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $stmt = $conexion->prepare("SELECT id, nombre, descripcion FROM servicios");
-    $stmt->execute();
-    $servicios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    echo json_encode($servicios);
-
-} catch (PDOException $e) {
-    echo json_encode([
-        "error" => "Error de conexión: " . $e->getMessage()
-    ]);
-}
-?>
+echo json_encode($servicios, JSON_UNESCAPED_UNICODE);

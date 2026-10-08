@@ -1,79 +1,60 @@
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import ServiceCard from '../components/ServiceCard.vue'
+import { obtenerServicios } from '../services/api'
+
+const servicios = ref([])
+const busqueda = ref('')
+const cargando = ref(true)
+const error = ref('')
+
+const serviciosFiltrados = computed(() => {
+  const texto = busqueda.value.toLowerCase()
+  return servicios.value.filter(servicio =>
+    servicio.nombre.toLowerCase().includes(texto)
+  )
+})
+
+onMounted(async () => {
+  try {
+    servicios.value = await obtenerServicios()
+  } catch (e) {
+    error.value = e.message
+  } finally {
+    cargando.value = false
+  }
+})
+
+function alSeleccionar(servicio) {
+  alert('Seleccionaste: ' + servicio.nombre)
+}
+</script>
+
 <template>
-  <div class="services-container">
-    <h1>Catálogo de Servicios</h1>
-    <p>Aquí podrás consultar los servicios disponibles obtenidos desde nuestra API de PHP.</p>
-    
-    <div class="card-list">
-      <div class="card">
-        <h3>Servicio de Ejemplo 1</h3>
-        <p>Descripción del primer servicio integrado en el sistema full stack.</p>
+  <section>
+    <header class="section-header">
+      <div>
+        <h2>Servicios disponibles</h2>
+        <p>Consulta los servicios disponibles.</p>
       </div>
-      <div class="card">
-        <h3>Servicio de Ejemplo 2</h3>
-        <p>Descripción del segundo servicio integrado en el sistema full stack.</p>
-      </div>
-    </div>
+      <label>
+        Buscar servicio
+        <input v-model="busqueda" type="search" placeholder="Ej. desarrollo web">
+      </label>
+    </header>
 
-    <div class="back-link">
-      <router-link to="/" class="btn-secondary">Volver al Inicio</router-link>
+    <p v-if="cargando" aria-live="polite">Cargando información...</p>
+    <p v-else-if="error" role="alert">{{ error }}</p>
+    <p v-else-if="serviciosFiltrados.length === 0">
+      No existen servicios que coincidan con la búsqueda.
+    </p>
+    <div v-else class="services-grid">
+      <ServiceCard
+        v-for="servicio in serviciosFiltrados"
+        :key="servicio.id"
+        :servicio="servicio"
+        @seleccionar="alSeleccionar"
+      />
     </div>
-  </div>
+  </section>
 </template>
-
-<style scoped>
-.services-container {
-  padding: 30px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.services-container h1 {
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.services-container > p {
-  color: #666;
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.card-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.card {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.card h3 {
-  margin-top: 0;
-  color: #42b883;
-}
-
-.back-link {
-  text-align: center;
-}
-
-.btn-secondary {
-  display: inline-block;
-  background-color: #35495e;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.btn-secondary:hover {
-  background-color: #2c3e50;
-}
-</style>

@@ -26,13 +26,13 @@
     "eslint-plugin-oxlint": "~1.82.0",
     "eslint-plugin-vue": "~10.11.0",
     "globals": "^17.12.0",
-    "jsdom": "^30.1.1",
+    "jsdom": "^30.1.2",
     "npm-run-all2": "^9.0.3",
     "oxlint": "~1.82.0",
     "prettier": "3.9.6",
     "vite": "^8.2.2",
     "vite-plugin-vue-devtools": "^8.2.1",
-    "vitest": "^5.0.2",
+    "vitest": "^5.0.3",
     "vue-eslint-parser": "^10.4.1"
   },
   "engines": {
